@@ -52,6 +52,7 @@ def cleanIt(sentence):
 
 # Web Scraping Functions
 
+# To get the URL of the Movie
 def getUrl(title,year):
         listYears=[]
         listYears.append(year)
@@ -67,24 +68,45 @@ def getUrl(title,year):
         content = soup.find(id="main")
         subContent = content.find_all("div", class_="findSection")
 
+        #If the movie is in first page,this code works
         for i in subContent:
             if("Titles" in i.find_all(class_="findSectionHeader")[0]):
                       a=i.find_all("td",class_="result_text")
 
         for it in a:
             if((str(year+1) in str(it)) or (str(year) in str(it))  or (str(year-1) in str(it)) ):
-                #print((str(year+1) in str(it)) or (str(year) in str(it)) or (str(year-1) in str(it)))
-                #print(it)
-                #print(year)
+                aa=it.find_all("a")[0]['href']
+                if aa.strip():
+                    url2="http://imdb.com"+aa
+                    return url2
+                break
+        #If movie is in MORE TITLE MATCHES,it goes to second page and scrapes there
+        for i in subContent:
+            if("Titles" in i.find_all(class_="findSectionHeader")[0]):
+                      a=i.find_all(class_="findMoreMatches")
+        for it in a:
+            aa = it.find_all('a')
+        
+        url2 = "http://imdb.com" + aa[0]['href']
+        page2 = get(url2)
+        soup = BeautifulSoup(page2.content, 'lxml')
+        content = soup.find(id="main")
+        subContent = content.find_all("div", class_="findSection")
+        
+        for i in subContent:
+            if("Titles" in i.find_all(class_="findSectionHeader")[0]):
+                      a=i.find_all("td",class_="result_text")
+        for it in a:
+            if((str(year+1) in str(it)) or (str(year) in str(it))  or (str(year-1) in str(it)) ):
                 aa=it.find_all("a")[0]['href']
                 url2="http://imdb.com"+aa
-                break
+                return url2
         return url2
 
-
+# To get the Storyline of the Movie
 def getOverview(url):
     storyLine=""
-    global iterV
+    #global iterV
     try:
         page = get(url)
         soup = BeautifulSoup(page.content, 'lxml')
@@ -93,12 +115,11 @@ def getOverview(url):
         story = subContent.find("p")   
         storyLine = story.find("span").text.replace("span","").strip()
     except:
-        iterV+=1
-        print("Dude, your code sucked "+str(iterV)+" times :(" )
+        #iterV+=1
+        #print("Dude, your code sucked "+str(iterV)+" times :(" )
         return "NaN"
     
     return storyLine
-
 
 
 

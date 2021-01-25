@@ -1,4 +1,4 @@
 # GenrePrediction
-### Predicts the genre of a given Story line.
+### Predicts the genre of any given Story line or a Movie plot.
 
 ![alt text](https://github.com/earthlycoder/GenrePrediction/blob/master/flaskApp/GenrePrediction.png)
